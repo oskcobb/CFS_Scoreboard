@@ -1062,7 +1062,7 @@ spacer2.grid(row=11, column=0)
 period.grid(row=12, column=9, columnspan=3, sticky="nsew")
 p1.grid(row=13, column=4, columnspan=2)
 p2.grid(row=13, column=8, columnspan=2)
-half.grid(row=13, column=9, columnspan=2)
+#half.grid(row=13, column=9, columnspan=2)
 p3.grid(row=13, column=11, columnspan=2)
 p4.grid(row=13, column=14, columnspan=2)
 
