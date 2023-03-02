@@ -1,20 +1,41 @@
-#Written by Oskar L. Cobb, 2022
+#Written by Oskar L. Cobb, 2023
 #Inteneded only for use in Christian Fellowship School
+#version 2
 
 import tkinter as tk
 from tkinter import *
 from tkinter.ttk import *
 import os
 import math
-from time import sleep as wait
+from time import sleep
+import time
 import threading
+import keyboard
+from tkinter.messagebox import showinfo
+import random
+import time
+from datetime import datetime
+from threading import *
+from flask import Flask, Response, render_template, url_for
+from turbo_flask import Turbo
+import sys
+import os
+import scoreboardweb
+
+os.chdir(sys._MEIPASS)
 
 global killtime
 killtime = 0
 root = tk.Tk()
 root.iconbitmap("cfs.ico")
+app = Flask(__name__)
+turbo = Turbo(app)
 
-def time():
+def wait(x):
+    while True:
+        return
+
+def clock():
     if killtime == 0:
         return
     if killtime == 1:
@@ -28,7 +49,7 @@ def time():
         #sm = open("timesm.txt",'r+')
         i = sm.get()
         print(i)
-        if str(i) == "start minute":
+        if str(i) == "start minute" or str(i) == "":
             i = "0"
         print(i)
         if int(i) <= 9:
@@ -38,7 +59,7 @@ def time():
         #ss= open("timess.txt",'r+')
         x = ss.get()
         print(x)
-        if str(x) == "start second":
+        if str(x) == "start second" or str(x) == "":
             i = "0"
         print(x)
         if int(x) <= 9:
@@ -48,7 +69,7 @@ def time():
         #em = open("timeem.txt",'r+')
         y = em.get()
         print(y)
-        if str(y) == "end minute":
+        if str(y) == "end minute" or str(y) == "":
             y = "0"
         print(y)
         if int(y) <= 9:
@@ -58,7 +79,7 @@ def time():
         #es = open("timees.txt",'r+')
         z = es.get()
         print(z)
-        if str(z) == "end second":
+        if str(z) == "end second" or str(z) == "":
             z = "0"
         print(z)
         if int(z) <= 9:
@@ -66,17 +87,17 @@ def time():
                 z = "0" + str(z)
         print(z)
 
-        if i > y:
+        if int(i) > int(y):
             countup = False
             s = False
-        elif i < y:
+        elif int(i) < int(y):
             countup = True
             s = False
-        elif i == y:
-            if x > z:
+        elif int(i) == int(y):
+            if int(x) > int(z):
                 countup = False
                 s = True
-            elif x < z:
+            elif int(x) < int(z):
                 countup = True
                 s = True
             else:
@@ -91,23 +112,30 @@ def time():
             timeleft = True
             
         if countup == False and s == False:
+            z = float(z) + 0.1
+            g = time.time()
+            t = int(i)*60 + int(x)
+            nowt = t
+            valint = int(val)
+            print("valint: " + str(valint))
+            if val != 0 and valint == nowt:
+                t = val
+                print(str(val) + "\t" + str(nowt))
+            print(t)
+            print("t: " + str(t))
             while int(i) > int(y):
+                i = time.time()
+                e = i - g
+                rem = float(t) - e
+                i = int(rem/60)
+                math1 = rem/60 - int(rem/60)
+                math2 = math1 * 60
+                x = float(math2)
                 if killtime == 0:
                     cont = 0
                     return
-                # formating
-                if int(x) == 0:
-                    i = int(i) - 1
-                    x = 59
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                #-------------
-                x = int(x) - int(1)
                 if int(x) <= 9:
                     x = "0" + str(x)
-                #-------------
-                #sm.write(str(i))
-                #ss.write(str(x))
                 i = str(i)
                 x = str(x)
                 tm.seek(0)
@@ -117,7 +145,7 @@ def time():
                 ts.write(str(x))
                 ts.truncate()
                 print(str(i) + ":" + str(x))
-                if int(i) <= 0 and int(x) <= 0:
+                if float(i) <= 0 and float(x) <= 0:
                     #i = math.trunc(i)
                     #x = math.trunc(x)
                     i = str(i)
@@ -130,85 +158,21 @@ def time():
                     ts.truncate()
                     print(str(i) + ":" + str(x))
                     return
-                if int(x) == 0:
-                    i = int(i) - 1
-                    x = 59
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                wait(1)
-            while int(x) > int(z):
+            while float(x) > float(z):
+                i = time.time()
+                e = i - g
+                rem = t - (e)
+                i = int(rem/60)
+                math1 = rem/60 - int(rem/60)
+                math2 = math1 * 60
+                x = float(math2)
                 if killtime == 0:
                     cont = 0
                     return
-                # formating
-                if int(x) == 0:
-                    i = int(i) - 1
-                    x = 59
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                #-------------
-                x = int(x) - int(1)
-                if int(x) <= 9:
-                    x = "0" + str(x)
-                #-------------
-                i = str(i)
-                x = str(x)
-                tm.seek(0)
-                tm.write(str(i))
-                tm.truncate()
-                ts.seek(0)
-                ts.write(str(x))
-                ts.truncate()
-                if int(x) <= 9:
-                    x = "0" + str(x)
-                    print(x)
-                print(str(i) + ":" + str(x))
-                if int(i) <= 0 and int(x) <= 0:
-                    print(str(i) + ":" + str(x))
-                    return
-                wait(1)
-        elif countup == False and s == True:
-            while int(x) > int(z):
-                if killtime == 0:
-                    cont = 0
-                    return
-                if int(x) == 0:
-                    i = int(i) - 1
-                    x = 59
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                x = int(x) - int(1)
-                if int(x) <= 9:
-                    x = "0" + str(x)
-                i = str(i)
-                x = str(x)
-                tm.seek(0)
-                tm.write(str(i))
-                tm.truncate()
-                ts.seek(0)
-                ts.write(str(x))
-                ts.truncate()
-                if int(x) <= 9:
-                    x = "0" + str(x)
-                    print(x)
-                print(str(i) + ":" + str(x))
-                if int(i) <= 0 and int(x) <= 0:
-                    print(str(i) + ":" + str(x))
-                    return
-                wait(1)
-        elif countup == True and s == True:
-            while int(x) < int(z):
-                if killtime == 0:
-                    cont = 0
-                    break
-                x = int(x) + 1
-                if int(x) == 60:
-                    i = int(i) + 1
+                if float(x) <= 0.1:
                     x = 0
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                if int(x) <= 9:
-                    x = "0" + str(x)
+                    return
+                #-------------
                 i = str(i)
                 x = str(x)
                 tm.seek(0)
@@ -217,30 +181,97 @@ def time():
                 ts.seek(0)
                 ts.write(str(x))
                 ts.truncate()
-                #if int(x) <= 9:
-                    #x = "0" + str(x)
                 print(str(i) + ":" + str(x))
-                if int(i) <= 0 and int(x) <= 0:
+                if float(i) == 0 and float(x) == 0:
                     print(str(i) + ":" + str(x))
                     return
-                wait(1)
+        elif countup == False and s == True:
+            z = float(z) + 0.1
+            g = time.time()
+            t = int(i)*60 + int(x)
+            nowt = t
+            valint = int(val)
+            while float(x) > float(z):
+                i = time.time()
+                e = i - g
+                rem = t - (e)
+                i = int(rem/60)
+                math1 = rem/60 - int(rem/60)
+                math2 = math1 * 60
+                x = float(math2)
+                if killtime == 0:
+                    cont = 0
+                    return
+                if float(x) <= 0.1:
+                    x = 0
+                    return
+                #-------------
+                i = str(i)
+                x = str(x)
+                tm.seek(0)
+                tm.write(str(i))
+                tm.truncate()
+                ts.seek(0)
+                ts.write(str(x))
+                ts.truncate()
+                print(str(i) + ":" + str(x))
+                if float(i) == 0 and float(x) == 0:
+                    print(str(i) + ":" + str(x))
+                    return
+        elif countup == True and s == True:
+            z = float(z) + 0.1
+            while float(x) > float(z):
+                i = time.time()
+                e = i - g
+                rem = t + (e)
+                i = int(rem/60)
+                math1 = rem/60 - int(rem/60)
+                math2 = math1 * 60
+                x = float(math2)
+                if killtime == 0:
+                    cont = 0
+                    return
+                if float(x) <= 0.1:
+                    x = 0
+                    return
+                #-------------
+                i = str(i)
+                x = str(x)
+                tm.seek(0)
+                tm.write(str(i))
+                tm.truncate()
+                ts.seek(0)
+                ts.write(str(x))
+                ts.truncate()
+                print(str(i) + ":" + str(x))
+                if float(i) == 0 and float(x) == 0:
+                    print(str(i) + ":" + str(x))
+                    return
         elif countup == True and s == False: 
-            while int(i) < int(y):
+            z = float(z) + 0.1
+            g = time.time()
+            t = int(i)*60 + int(x)
+            nowt = t
+            valint = int(val)
+            print("valint: " + str(valint))
+            if val != 0 and valint == nowt:
+                t = val
+                print(str(val) + "\t" + str(nowt))
+            print(t)
+            print("t: " + str(t))
+            while int(i) > int(y):
+                i = time.time()
+                e = i - g
+                rem = float(t) + e
+                i = int(rem/60)
+                math1 = rem/60 - int(rem/60)
+                math2 = math1 * 60
+                x = float(math2)
                 if killtime == 0:
                     cont = 0
                     return
-                # formating
-                x = int(x) + 1
-                if int(x) == 60:
-                    i = int(i) + 1
-                    x = 00
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                #-------------
                 if int(x) <= 9:
                     x = "0" + str(x)
-                #-------------
-                print(str(i) + ":" + str(x))
                 i = str(i)
                 x = str(x)
                 tm.seek(0)
@@ -249,24 +280,34 @@ def time():
                 ts.seek(0)
                 ts.write(str(x))
                 ts.truncate()
-                if int(i) <= 0 and int(x) <= 0:
+                print(str(i) + ":" + str(x))
+                if float(i) <= 0 and float(x) <= 0:
+                    #i = math.trunc(i)
+                    #x = math.trunc(x)
+                    i = str(i)
+                    x = str(x)
+                    tm.seek(0)
+                    tm.write(i)
+                    tm.truncate()
+                    ts.seek(0)
+                    ts.write(x)
+                    ts.truncate()
                     print(str(i) + ":" + str(x))
                     return
-                wait(1)
-            while int(x) < int(z):
+            while float(x) > float(z):
+                i = time.time()
+                e = i - g
+                rem = t + (e)
+                i = int(rem/60)
+                math1 = rem/60 - int(rem/60)
+                math2 = math1 * 60
+                x = float(math2)
                 if killtime == 0:
                     cont = 0
                     return
-                # formating
-                x = int(x) + 1
-                if int(x) == 60:
-                    i = int(i) + 1
-                    x = 00
-                    if int(i) <= 9:
-                        i = "0" + str(i)
-                #-------------
-                if int(x) <= 9:
-                    x = "0" + str(x)
+                if float(x) <= 0.1:
+                    x = 0
+                    return
                 #-------------
                 i = str(i)
                 x = str(x)
@@ -276,16 +317,10 @@ def time():
                 ts.seek(0)
                 ts.write(str(x))
                 ts.truncate()
-                if int(x) <= 9:
-                    x = "0" + str(x)
-                    print(x)
-                if int(x) <= 9:
-                    x = "0" + str(x)
                 print(str(i) + ":" + str(x))
-                if int(i) <= 0 and int(x) <= 0:
+                if float(i) == 0 and float(x) == 0:
                     print(str(i) + ":" + str(x))
                     return
-                wait(1)
         break
 
 def killti():
@@ -301,14 +336,14 @@ def tim():
     global killtime
     if killtime == 1:
         killtime = 0
-        timr = threading.Thread(target=time)
+        timr = threading.Thread(target=clock)
         timr.join()
         tim()
     elif killtime == 0:
         #global killtime
         killtime = 1
         print(killtime)
-        timr = threading.Thread(target=time)
+        timr = threading.Thread(target=clock)
         timr.start()
 
 def clearsm(e):
@@ -581,6 +616,16 @@ def min1cfs():
                 pv.truncate()
                 cfscore.delete(0,"end")
                 cfscore.insert(0, c)
+            print(c)
+            if int(c) < 0 :
+                with open("cfs_score.txt",'r+') as pv:
+                    c = 0
+                    c = str(c) + "0"
+                    pv.seek(0)
+                    pv.write(c)
+                    pv.truncate()
+                    cfscore.delete(0,"end")
+                    cfscore.insert(0, c) 
     except ValueError:
         with open("cfs_score.txt",'r+') as pv:
             c = 0
@@ -615,10 +660,20 @@ def min2cfs():
                 pv.truncate()
                 cfscore.delete(0,"end")
                 cfscore.insert(0, c)
+            print(c)
+            if int(c) < 0 :
+                with open("cfs_score.txt",'r+') as pv:
+                    c = 0
+                    c = str(c) + "0"
+                    pv.seek(0)
+                    pv.write(c)
+                    pv.truncate()
+                    cfscore.delete(0,"end")
+                    cfscore.insert(0, c) 
     except ValueError:
         with open("cfs_score.txt",'r+') as pv:
             c = 0
-            c = str(c)
+            c = str(c) + "0"
             pv.seek(0)
             pv.write(c)
             pv.truncate()
@@ -649,6 +704,16 @@ def min3cfs():
                 pv.truncate()
                 cfscore.delete(0,"end")
                 cfscore.insert(0, c)
+            print(c)
+            if int(c) < 0 :
+                with open("cfs_score.txt",'r+') as pv:
+                    c = 0
+                    c = str(c) + "0"
+                    pv.seek(0)
+                    pv.write(c)
+                    pv.truncate()
+                    cfscore.delete(0,"end")
+                    cfscore.insert(0, c) 
     except ValueError:
         with open("cfs_score.txt",'r+') as pv:
             c = 0
@@ -683,6 +748,16 @@ def min1aw():
                 pv.truncate()
                 awayscore.delete(0,"end")
                 awayscore.insert(0, c)
+            print(c)
+            if int(c) < 0 :
+                with open("away_score.txt",'r+') as pv:
+                    c = 0
+                    c = str(c) + "0"
+                    pv.seek(0)
+                    pv.write(c)
+                    pv.truncate()
+                    awayscore.delete(0,"end")
+                    awayscore.insert(0, c) 
     except ValueError:
         with open("away_score.txt",'r+') as pv:
             c = 0
@@ -717,6 +792,16 @@ def min2aw():
                 pv.truncate()
                 awayscore.delete(0,"end")
                 awayscore.insert(0, c)
+            print(c)
+            if int(c) < 0 :
+                with open("away_score.txt",'r+') as pv:
+                    c = 0
+                    c = str(c) + "0"
+                    pv.seek(0)
+                    pv.write(c)
+                    pv.truncate()
+                    awayscore.delete(0,"end")
+                    awayscore.insert(0, c) 
     except ValueError:
         with open("away_score.txt",'r+') as pv:
             c = 0
@@ -751,6 +836,16 @@ def min3aw():
                 pv.truncate()
                 awayscore.delete(0,"end")
                 awayscore.insert(0, c)
+            print(c)
+            if int(c) < 0 :
+                with open("away_score.txt",'r+') as pv:
+                    c = 0
+                    c = str(c) + "0"
+                    pv.seek(0)
+                    pv.write(c)
+                    pv.truncate()
+                    awayscore.delete(0,"end")
+                    awayscore.insert(0, c)   
     except ValueError:
         with open("away_score.txt",'r+') as pv:
             c = 0
@@ -842,13 +937,21 @@ def psel():
 
 def killt():
     sms = open("timem.txt", "r+")
-    sms = sms.read()
+    sms = float(sms.read())
     sss = open("times.txt", "r+")
-    sss = sss.read()
+    sss = float(sss.read())
     sm.delete(0, tk.END)
     ss.delete(0, tk.END)
     global killtime 
     killtime = 0
+    global mval
+    global sval
+    global val
+    mval = sms
+    sval = sss
+    val = float(mval)*60.0 + float(sval)
+    sms = int(sms)
+    sss = int(sss)
     sm.insert(0, sms)
     ss.insert(0, sss)
 
@@ -865,6 +968,12 @@ def awayteamfunc(e):
             pv.seek(0)
             pv.write(i)
             pv.truncate()
+
+def keys():
+    showinfo("Window", " Alt + N -> Start clock \n Alt + M -> Pause clock \n ctrl + 1 -> Plus one to home score \n ctrl + 2 -> Plus two to home score \n ctrl + 3 -> Plus three to home score \n alt + 1 -> Minus one to home score \n alt + 2 -> Minus two to home score \n alt + 3 -> Minus three to home score \n ctrl + 4 -> Plus one to away score \n ctrl + 5 -> Plus two to away score \n ctrl + 6 -> Plus three to away score \n alt + 4 -> Minus one to away score \n alt + 5 -> Minus two to away score \n alt + 6 -> Minus three to away score")
+
+def about():
+    showinfo("Window", "CFS Digital Scoreboard\nVersion: 2\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2023")
 
 button1timetest = tk.Button(
     text="⏵",
@@ -1013,13 +1122,32 @@ p2 = tk.Radiobutton(root, text='2nd', variable=var3, value='2', command=psel)
 half = tk.Radiobutton(root, text='Half', variable=var3, value='half', command=psel)
 p3 = tk.Radiobutton(root, text='3rd', variable=var3, value='3', command=psel)
 p4 = tk.Radiobutton(root, text='4th', variable=var3, value='4', command=psel)
-
+keyboard.add_hotkey('ctrl + 1', plus1cfs)
+keyboard.add_hotkey('ctrl + 2', plus2cfs)
+keyboard.add_hotkey('ctrl + 3', plus3cfs)
+keyboard.add_hotkey('alt + 1', min1cfs)
+keyboard.add_hotkey('alt + 2', min2cfs)
+keyboard.add_hotkey('alt + 3', min3cfs)
+keyboard.add_hotkey('ctrl + 4', plus1aw)
+keyboard.add_hotkey('ctrl + 5', plus2aw)
+keyboard.add_hotkey('ctrl + 6', plus3aw)
+keyboard.add_hotkey('alt + 4', min1aw)
+keyboard.add_hotkey('alt + 5', min2aw)
+keyboard.add_hotkey('alt + 6', min3aw)
+keyboard.add_hotkey('alt + n', tim)
+keyboard.add_hotkey('alt + m', killt)
+menubar = Menu(root)
+help_ = Menu(menubar, tearoff = 0)
+menubar.add_cascade(label ='Help', menu = help_)
+help_.add_command(label ='Hotkeys', command = keys)
+help_.add_command(label ='about', command = about)
 #button1timetest.config(image=play)
 #button1timetest.image = play
 rl1 = 8
 rl2 = 9
 re3 = 10
 rn1 = 5
+
 t.grid(row=1, column=9, columnspan=3)
 cfs.grid(row=2, column=4, columnspan=2)
 away.grid(row=2, column=14, columnspan=3)
@@ -1085,6 +1213,8 @@ sm.insert(0, "start minute")
 ss.insert(0, "start second")
 em.insert(0, "end minute")
 es.insert(0, "end second")
+cfscore.insert(0, "00")
+awayscore.insert(0, "00")
 
 with open("cfs_score.txt",'w') as pv:
     pv.write("00")
@@ -1098,7 +1228,25 @@ with open("times.txt",'w') as pv:
 with open("timem.txt",'w') as pv:
     pv.write("00")
     pv.close()
+with open("awayteam.txt",'w') as pv:
+    pv.write("")
+    pv.close()
+with open("cfteam.txt",'w') as pv:
+    pv.write("")
+    pv.close()
+with open("cfsbon.txt",'w') as pv:
+    pv.write("")
+    pv.close()
+with open("abon.txt",'w') as pv:
+    pv.write("")
+    pv.close()
+with open("sel.txt",'w') as pv:
+    pv.write("1st")
+    pv.close()
+global val
+val = 0
 os.startfile("scoreboardweb.py")
 root.geometry("451x350")
 root.title("CFS Scoreboard")
+root.config(menu = menubar)
 root.mainloop()

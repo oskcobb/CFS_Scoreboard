@@ -1,5 +1,7 @@
+#!/usr/bin/python -i
 #Written by Oskar L. Cobb, 2022
 #Inteneded only for use in Christian Fellowship School
+#version 2
 
 import random
 import time
@@ -43,7 +45,15 @@ def clock():
         m = open("timem.txt", "r+")
         sec = s.read()
         min = m.read()
+        sec = int(float(sec))
+        min = int(float(min))
+        if sec <= 9:
+            sec = "0" + str(sec)
         n = str(min) + ":" + str(sec)
+        if int(min) == 0 and int(sec) <= 10 and int(sec) != 0:
+            n = '<div style="float: right; font-size: 124px; text-align: right; vertical-align: 2px; color: red;">' + n + "</p>"
+        else:
+            n = '<div style="float: right; font-size: 124px; text-align: right; vertical-align: 2px;">' + n + "</p>"
         yield str(n)
     return Response(countdown(), mimetype='text') 
 
