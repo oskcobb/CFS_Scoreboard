@@ -22,7 +22,8 @@ import sys
 import os
 import scoreboardweb
 
-os.chdir(sys._MEIPASS)
+#Win build only
+#os.chdir(sys._MEIPASS)
 
 global killtime
 killtime = 0
