@@ -1,0 +1,10 @@
+fix time thing (won't count up and has trouble with blank items)
+get rid of extra windows (if possible) X
+color different parts of scoreboard
+auto-detect cfs √
+themes for different games 
+theme server √
+figure out emergency theme editing √
+fix help -> hotkeys formatting √
+font change?
+"reset to zero" hotkey (change whats cleared with shift and ctrl)
