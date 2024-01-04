@@ -1102,10 +1102,17 @@ def saveEmergency():
     with open("htmlfile.txt",'w') as pv:
         pv.write("index.html")
         pv.close()
+    with open("reload.txt",'w') as pv:
+        pv.write("True")
+        pv.close()
     txtedit.destroy()
 
-def rst():
+def rst(code):
+    code.delete("1.0",END)
     code.insert("1.0", default)
+    with open("reload.txt",'w') as pv:
+        pv.write("True")
+        pv.close()
 
 def textedit():
     global code
@@ -1122,14 +1129,23 @@ def textedit():
     scrollbar.config(command=code.yview) 
     cancelbtn = Button(txtedit, text="Cancel", command=txtedit.destroy)
     savebtn = Button(txtedit, text="Save", command=saveEmergency)
-    rstbtn = Button(txtedit, text="Reset to default", command=rst)
+    rstbtn = Button(txtedit, text="Reset to default", command= lambda: rst(code))
     cancelbtn.pack(side=RIGHT)
     savebtn.pack(side=RIGHT)
     rstbtn.pack(side=RIGHT)
     code.insert("1.0", default)
 
-def dl_theme(the):
-    dl = requests.get()
+def dl_theme(url):
+    try:
+        dl = requests.get(url)
+    except:
+        showinfo("URL Error")
+    with open("index.html",'w') as index:
+        index.write(dl)
+        index.close()
+    with open("reload.txt",'w') as pv:
+        pv.write("True")
+        pv.close()
 
 def choosetheme():
     chooseth = Toplevel(root)
@@ -1141,7 +1157,7 @@ def choosetheme():
         theme = theme["name"]
         button = tk.Button(chooseth,
                                  text=theme,
-                                 command=rst)
+                                 command= lambda: dl_theme(theme["url"]))
         button.pack()
 
 button1timetest = tk.Button(

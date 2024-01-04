@@ -128,7 +128,11 @@ def abon():
 def reload():
     def reloaded():
         with open("reload.txt", "r+") as r:
+            print(r)
             if r == "True":
+                with open("reload.txt",'w') as pv:
+                    pv.write("False")
+                    pv.close()
                 yield redirect("/", code=302)
     return Response(reloaded())
 

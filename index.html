@@ -1,178 +1,86 @@
-<!--Written by Oskar L. Cobb, 2022-->
-
+<!--Written by Oskar L. Cobb, 2023-->
 <!--Inteneded only for use in Christian Fellowship School-->
 
-
-
 <!DOCTYPE html>
-
 <head>
-
-    <meta name="viewport" content="width=1720, initial-scale=1">
-
-    <title>CFS Scoreboard</title>
-
-    {{ turbo() }}
-
-    <style>
-
-    .scoreboard {
-
-        background: #ffffff;
-
-        float:left;
-
-        height: 100%;
-
-        width: 100%;
-
-    }
-
-    p.clear {
-
-        clear: left;
-
-    }
-
     </style>
-
     <link rel="icon" type="image/png" href="https://cfsknights.org/wp-content/uploads/2022/06/cfs-site-icon-150x150.png">
-
  </head>
-
  <body style="background-color: #00ff00;">
-
     <div class="scoreboard">
-
         <image style="float: left;"src="https://cfsknights.org/wp-content/uploads/2022/06/cfs-site-icon-150x150.png"/>
-
         <!--<p style="display: inline-block; position: relative; top: -10%; left: 15%; font-size: 80px; ">CFS</p>-->
-
         <div id="cfteam" style=" float: left; font-size: 42px; margin-left: 50px;"></div>
-
         <!--<div id="cfsbon" style="float: left; margin-left: 80px; margin-top: 80px; font-size: 24px;"></div>-->
-
         <div id="cfs_score" style=" float: left; border: 5px solid black; margin-left: 50px; font-size: 124px;"></div>
         <div id="awayteam" style=" float: left; margin-left: 80px; font-size: 52px; margin-top: 35px;"></div>
         <!--<div id="abon" style="float: left; margin-left: 80px; margin-top: 80px; font-size: 24px;"></div>-->
         <div id="away_score" style=" float: left; border: 5px solid black; margin-left: 40px; font-size: 124px;"></div>
-
         <div id="clock" style="float: right; font-size: 124px; text-align: right; vertical-align: 2px;></div>"></div>
-
         <div id="quarter" style="float: right; font-size: 124px; vertical-align: 2px; margin-right: 70px;"></div>
-
     </div>
-
     <script>
-
     var cfs_score = document.getElementById("cfs_score");
-
     var clock = document.getElementById("clock");
-
     var siteWidth = 1720;
-
     var scale = screen.width /siteWidth;
 
-
-
     document.querySelector('meta[name="viewport"]').setAttribute('content', 'width='+siteWidth+', initial-scale='+scale+'');
-
     setInterval(() => {
-
         fetch("{{ url_for('cfs_score') }}")
-
         .then(response => {
-
                 response.text().then(t => {cfs_score.innerHTML = t})
-
             });
-
         }, 1000);  
-
     setInterval(() => {
-
         fetch("{{ url_for('clock') }}")
-
         .then(response => {
-
                 response.text().then(t => {clock.innerHTML = t})
-
             });
-
         }, 1000);  
-
     setInterval(() => {
-
         fetch("{{ url_for('cfteam') }}")
-
         .then(response => {
-
                 response.text().then(t => {cfteam.innerHTML = t})
-
             });
-
         }, 1000);
-
     setInterval(() => {
-
         fetch("{{ url_for('away_score') }}")
-
         .then(response => {
-
                 response.text().then(t => {away_score.innerHTML = t})
-
             });
-
         }, 1000);  
-
     setInterval(() => {
-
         fetch("{{ url_for('awayteam') }}")
-
         .then(response => {
-
                 response.text().then(t => {awayteam.innerHTML = t})
-
             });
-
         }, 1000);
-
     setInterval(() => {
-
         fetch("{{ url_for('quarter') }}")
-
         .then(response => {
-
                 response.text().then(t => {quarter.innerHTML = t})
-
             });
-
         }, 1000);
-
-    /*setInterval(() => {
-
-        fetch("{{ url_for('cfsbon') }}")
-
-        .then(response => {
-
-                response.text().then(t => {cfsbon.innerHTML = t})
-
-            });
-
-        }, 1000);
-
     setInterval(() => {
-
-        fetch("{{ url_for('abon') }}")
-
+        fetch("{{ url_for('reload') }}")
         .then(response => {
-
-                response.text().then(t => {abon.innerHTML = t})
-
+                response.text().then(t => {reload.innerHTML = t})
             });
-
+        }, 1000);
+    /*setInterval(() => {
+        fetch("{{ url_for('cfsbon') }}")
+        .then(response => {
+                response.text().then(t => {cfsbon.innerHTML = t})
+            });
+        }, 1000);
+    setInterval(() => {
+        fetch("{{ url_for('abon') }}")
+        .then(response => {
+                response.text().then(t => {abon.innerHTML = t})
+            });
         }, 1000);*/
-
     </script>
-
  </body>
+
+
