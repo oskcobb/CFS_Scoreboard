@@ -1135,17 +1135,29 @@ def textedit():
     rstbtn.pack(side=RIGHT)
     code.insert("1.0", default)
 
-def dl_theme(url):
-    try:
-        dl = requests.get(url)
-    except:
-        showinfo("URL Error")
-    with open("index.html",'w') as index:
-        index.write(dl)
-        index.close()
-    with open("reload.txt",'w') as pv:
-        pv.write("True")
-        pv.close()
+def dl_theme(name):
+    r = requests.get('https://raw.githubusercontent.com/oskcobb/CFS_Scoreboard-Themes/main/themes.json')
+    themes = json.loads(r.text)
+    for theme in themes["themes"]:
+        print(theme)
+        print(name)
+        print()
+        if theme["name"] == name:
+            temp = theme["name"]
+            url = theme["url"]
+            print(url)
+            try:
+                print(url)
+                dl = str(requests.get(url).text)
+            except:
+                showinfo("Error", "URL Error")
+                pass
+            with open("index.html",'w') as index:
+                index.write(dl)
+                index.close()
+            with open("reload.txt",'w') as pv:
+                pv.write("True")
+                pv.close()
 
 def choosetheme():
     chooseth = Toplevel(root)
@@ -1154,10 +1166,11 @@ def choosetheme():
     r = requests.get('https://raw.githubusercontent.com/oskcobb/CFS_Scoreboard-Themes/main/themes.json')
     themes = json.loads(r.text)
     for theme in themes["themes"]:
-        theme = theme["name"]
+        name = theme["name"]
+        print(name)
         button = tk.Button(chooseth,
-                                 text=theme,
-                                 command= lambda: dl_theme(theme["url"]))
+                                 text=name,
+                                 command= lambda j=name: dl_theme(j))
         button.pack()
 
 button1timetest = tk.Button(
@@ -1447,7 +1460,7 @@ with open("index.html",'w') as pv:
         pv.close()
 global val
 val = 0
-#os.startfile("scoreboardweb.py")
+os.startfile("scoreboardweb.py")
 root.geometry("451x350")
 root.title("CFS Scoreboard")
 root.config(menu = menubar)
