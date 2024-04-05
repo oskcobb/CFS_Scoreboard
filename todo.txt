@@ -6,5 +6,5 @@ themes for different games
 theme server √
 figure out emergency theme editing √
 fix help -> hotkeys formatting √
-font change?
+font change? 
 "reset to zero" hotkey (change whats cleared with shift and ctrl)
