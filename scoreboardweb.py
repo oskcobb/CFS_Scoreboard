@@ -12,10 +12,13 @@ from flask import Flask, Response, render_template, url_for, redirect
 from turbo_flask import Turbo
 import sys
 import os
+import obsws_python as obs
 
 app = Flask(__name__)
 turbo = Turbo(app)
 html = 'index.html'
+cl = obs.ReqClient(host='localhost', port=4455, password='', timeout=3)
+cl.create_scene_item(1, "Browser")
 
 @app.route('/')
 def index():

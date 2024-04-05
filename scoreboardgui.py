@@ -11,7 +11,7 @@ from time import sleep
 import time
 import threading
 import keyboard
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showinfo, showerror, 
 import random
 import time
 from datetime import datetime
@@ -1071,8 +1071,28 @@ def awayteamfunc(e):
             pv.write(i)
             pv.truncate()
 
+def installobsthing():
+    do thing
+
+def OBS():
+    ohbees = Toplevel(root)
+    ohbees.title("Choose Theme")
+    ohbees.geometry("300x312")
+    button = tk.Button(ohbees,
+                                 text="Install OBS Element",
+                                 command= lambda: installobsthing())
+    button.pack()
+    showinfo("OBS Setup Info", """
+            Capture type: Browser
+            Width: 2000
+            Height: 150
+            Base (Canvas) Resolution: 1920x1080
+
+""")
+    
+
 def keys():
-    showinfo("Window", """ 
+    showinfo("Hotkeys", """ 
              Alt + N   ->  Start clock
              Alt + M   ->  Pause clock
              Ctrl + 1  ->  Plus one to home score
@@ -1088,7 +1108,7 @@ def keys():
              Alt + 5   ->  Minus two to away score
              Alt + 6   ->  Minus three to away score
              Alt + 8   ->  Clear time
-             Alt + 9   ->  Clear score 
+             Alt + 9   ->  Clear score
              Alt + 0   ->  Clear all
              """)
 
@@ -1150,7 +1170,7 @@ def dl_theme(name):
                 print(url)
                 dl = str(requests.get(url).text)
             except:
-                showinfo("Error", "URL Error")
+                showerror("Error", "URL Error")
                 pass
             with open("index.html",'w') as index:
                 index.write(dl)
@@ -1337,12 +1357,13 @@ keyboard.add_hotkey('Alt + m', killt)
 menubar = Menu(root)
 help_ = Menu(menubar, tearoff = 0)
 theme_ = Menu(menubar, tearoff = 0)
-menubar.add_cascade(label ='Help', menu = help_)
 menubar.add_cascade(label ='Themes', menu = theme_)
+menubar.add_cascade(label ='Help', menu = help_)
 help_.add_command(label ='Hotkeys', command = keys)
-help_.add_command(label ='about', command = about)
-theme_.add_command(label ='choose new theme', command = choosetheme)
-theme_.add_command(label ='emergency theme edit', command = textedit)
+help_.add_command(label ='OBS Setup', command = OBS)
+help_.add_command(label ='About', command = about)
+theme_.add_command(label ='Choose new theme', command = choosetheme)
+theme_.add_command(label ='Emergency theme editor', command = textedit)
 #button1timetest.config(image=play)
 #button1timetest.image = play
 rl1 = 8
