@@ -11,7 +11,7 @@ from time import sleep
 import time
 import threading
 import keyboard
-from tkinter.messagebox import showinfo, showerror, 
+from tkinter.messagebox import showinfo, showerror
 import random
 import time
 from datetime import datetime
@@ -29,6 +29,7 @@ import json
 global killtime
 killtime = 0
 root = tk.Tk()
+root.resizable(False, False)
 root.iconbitmap("cfs.ico")
 app = Flask(__name__)
 turbo = Turbo(app)
@@ -1072,23 +1073,26 @@ def awayteamfunc(e):
             pv.truncate()
 
 def installobsthing():
-    do thing
+    if sys.platform.startswith('win32') == False:
+        showerror("Error: this feature is only functional on windows currently.")
 
 def OBS():
     ohbees = Toplevel(root)
-    ohbees.title("Choose Theme")
+    ohbees.resizable(False, False)
+    ohbees.title("OBS Setup Info")
     ohbees.geometry("300x312")
-    button = tk.Button(ohbees,
-                                 text="Install OBS Element",
-                                 command= lambda: installobsthing())
-    button.pack()
-    showinfo("OBS Setup Info", """
+    t1 = tk.Label(ohbees, text="""
             Capture type: Browser
             Width: 2000
             Height: 150
             Base (Canvas) Resolution: 1920x1080
 
 """)
+    button = tk.Button(ohbees,
+                                 text="Install OBS Element",
+                                 command= lambda: installobsthing())
+    t1.pack()
+    button.pack()
     
 
 def keys():
@@ -1138,6 +1142,7 @@ def textedit():
     global code
     global txtedit
     txtedit = Toplevel(root)
+    txtedit.resizable(False, False)
     txtedit.title("Emergency theme edit")
     txtedit.geometry("600x412")
     scrollbar = Scrollbar(txtedit) 
@@ -1181,6 +1186,7 @@ def dl_theme(name):
 
 def choosetheme():
     chooseth = Toplevel(root)
+    chooseth.resizable(False, False)
     chooseth.title("Choose Theme")
     #chooseth.geometry("300x312")
     r = requests.get('https://raw.githubusercontent.com/oskcobb/CFS_Scoreboard-Themes/main/themes.json')

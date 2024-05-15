@@ -17,8 +17,8 @@ import obsws_python as obs
 app = Flask(__name__)
 turbo = Turbo(app)
 html = 'index.html'
-cl = obs.ReqClient(host='localhost', port=4455, password='', timeout=3)
-cl.create_scene_item(1, "Browser")
+#cl = obs.ReqClient(host='localhost', port=4455, password='', timeout=3)
+#cl.create_scene_item(1, "Browser")
 
 @app.route('/')
 def index():
@@ -64,8 +64,11 @@ def clock():
         if sec <= 9:
             sec = "0" + str(sec)
         n = str(min) + ":" + str(sec)
-        if int(min) == 0 and int(sec) <= 10 and int(sec) != 0:
-            n = '<div style="float: right; font-size: 124px; text-align: right; vertical-align: 2px; color: red;">' + n + "</p>"
+        if int(min) == 0 and int(sec) <= 10 and int(sec) > 9 and int(sec) != 0:
+            n = '<div style="float: right; font-size: 124px; text-align: right; vertical-align: 2px; color: red;">' + str(sec) + "</p>"
+        elif int(min) == 0 and int(sec) <= 9 and int(sec) != 0:
+            sec = sec.replace('0', '')
+            n = '<div style="float: right; font-size: 124px; text-align: right; margin-right: 40px; vertical-align: 2px; color: red;">' + str(sec) + "</p>"
         else:
             n = '<div style="float: right; font-size: 124px; text-align: right; vertical-align: 2px;">' + n + "</p>"
         yield str(n)

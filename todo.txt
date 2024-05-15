@@ -8,3 +8,4 @@ figure out emergency theme editing √
 fix help -> hotkeys formatting √
 font change? 
 "reset to zero" hotkey (change whats cleared with shift and ctrl)
+remove 0 from t-10
