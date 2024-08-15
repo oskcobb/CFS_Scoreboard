@@ -4,6 +4,7 @@
 
 import tkinter as tk
 from tkinter import *
+from tkinter import filedialog
 from tkinter.ttk import *
 import os
 import math
@@ -11,7 +12,7 @@ from time import sleep
 import time
 import threading
 import keyboard
-from tkinter.messagebox import showinfo, showerror
+from tkinter.messagebox import showinfo, showerror, askquestion
 import random
 import time
 from datetime import datetime
@@ -22,6 +23,9 @@ import sys
 import os
 import requests
 import json
+import urllib.request
+from os import remove
+from sys import argv
 
 #Win build only
 #os.chdir(sys._MEIPASS)
@@ -30,7 +34,7 @@ global killtime
 killtime = 0
 root = tk.Tk()
 root.resizable(False, False)
-root.iconbitmap("cfs.ico")
+#root.iconbitmap("cfs.ico")
 app = Flask(__name__)
 turbo = Turbo(app)
 
@@ -76,6 +80,19 @@ default = """<!--Written by Oskar L. Cobb, 2023-->
 
     document.querySelector('meta[name="viewport"]').setAttribute('content', 'width='+siteWidth+', initial-scale='+scale+'');
     setInterval(() => {
+            fetch("{{ url_for('reloaded') }}")
+            .then(response => {
+                    response.text().then(t => {i = t})
+                    console.log(i)
+                    if (i === "True") {
+                        window.location.replace("{{ url_for('index') }}");
+                        console.log("yes")
+                    }else{
+                        console.log("no")
+                    }
+                });
+            }, 1000); 
+    setInterval(() => {
         fetch("{{ url_for('cfs_score') }}")
         .then(response => {
                 response.text().then(t => {cfs_score.innerHTML = t})
@@ -109,12 +126,6 @@ default = """<!--Written by Oskar L. Cobb, 2023-->
         fetch("{{ url_for('quarter') }}")
         .then(response => {
                 response.text().then(t => {quarter.innerHTML = t})
-            });
-        }, 1000);
-    setInterval(() => {
-        fetch("{{ url_for('reload') }}")
-        .then(response => {
-                response.text().then(t => {reload.innerHTML = t})
             });
         }, 1000);
     /*setInterval(() => {
@@ -1088,11 +1099,11 @@ def OBS():
             Base (Canvas) Resolution: 1920x1080
 
 """)
-    button = tk.Button(ohbees,
-                                 text="Install OBS Element",
-                                 command= lambda: installobsthing())
-    t1.pack()
-    button.pack()
+#    button = tk.Button(ohbees,
+#                                 text="Install OBS Element",
+#                                 command= lambda: installobsthing())
+#    t1.pack()
+#    button.pack()
     
 
 def keys():
@@ -1117,7 +1128,7 @@ def keys():
              """)
 
 def about():
-    showinfo("Window", "CFS Digital Scoreboard\nVersion: 2\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2023")
+    showinfo("Window", "CFS Digital Scoreboard\nVersion: 3\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2024")
 
 def saveEmergency():
     with open("index.html",'w') as index:
@@ -1144,7 +1155,7 @@ def textedit():
     txtedit = Toplevel(root)
     txtedit.resizable(False, False)
     txtedit.title("Emergency theme edit")
-    txtedit.geometry("600x412")
+    txtedit.geometry("600x512")
     scrollbar = Scrollbar(txtedit) 
     scrollbar.pack(side=RIGHT, 
                fill=BOTH) 
@@ -1198,6 +1209,24 @@ def choosetheme():
                                  text=name,
                                  command= lambda j=name: dl_theme(j))
         button.pack()
+
+def update_check():
+    latest_ver = requests.get("https://api.github.com/repos/oskcobb/CFS_Scoreboard/releases/latest").json()["tag_name"]
+    print(latest_ver)
+    if latest_ver != version_num:
+        update = askquestion("Update Available", "A new update is available: \n \nVersion " + str(latest_ver) + "\n \nWould you like to update now?")
+        if update == "yes":
+            showinfo("Directory","Please select a directory to download the new version.")
+            save = filedialog.askdirectory()
+            dl_url = requests.get("https://api.github.com/repos/oskcobb/CFS_Scoreboard/releases/latest").json()["assets"][0]['browser_download_url']
+            file_path = str(save) + f"/CFS_Scoreboard {latest_ver}.exe"
+            urllib.request.urlretrieve(dl_url, file_path)
+            delquestion = askquestion("Complete", "Done downloading.\n\nWould you like to remove the current version?")
+            if delquestion == "yes":
+                showinfo("Complete", "Please open the new file after this closes to finish install.")
+                remove(argv[0])
+                #os.startfile(file_path)
+                exit()
 
 button1timetest = tk.Button(
     text="⏵",
@@ -1487,8 +1516,10 @@ with open("index.html",'w') as pv:
         pv.close()
 global val
 val = 0
-os.startfile("scoreboardweb.py")
+version_num = "v3.0"
+#os.startfile("scoreboardweb.py")
 root.geometry("451x350")
 root.title("CFS Scoreboard")
 root.config(menu = menubar)
+update_check()
 root.mainloop()
