@@ -12,7 +12,7 @@ from flask import Flask, Response, render_template, url_for, redirect
 from turbo_flask import Turbo
 import sys
 import os
-import obsws_python as obs
+#import obsws_python as obs
 
 app = Flask(__name__)
 turbo = Turbo(app)
@@ -33,6 +33,16 @@ def index():
         print('Error: index.html not found. Returning to defaults.')
     print(html)
     return render_template("index.html")
+
+@app.route('/reloaded')
+def reloaded():
+    with open("reload.txt",'r+') as rd:
+        load = rd.read()
+        print(load)
+        yield load
+        if load == "True":
+            rd.write("False")
+    return Response(reloaded(), mimetype='text')
 
 @app.route('/cfs_score')
 def cfs_score():
@@ -83,7 +93,8 @@ def cfteam():
         n = open("cfteam.txt", "r+")
         n = n.read()
         print(n)
-        if n == "MS" or n == "JV" or n == "Varsity" or n == "ms" or n == "jv" or n == "varsity" or n == "mS" or n == "jV" or n == "Ms" or n == "Jv" or n == "vArsity" or n == "vaRsity" or n == "varSity" or n == "varsIty" or n == "varsiTy" or n == "varsitY":
+        l = n.lower()
+        if l == "jv" or l == "varsity" or l == "ms" or l == " girls jv" or l == " boys jv" or l == "girls varsity" or l == "boys varsity" or l == "girls ms" or l == "boys ms":
             n = "CFS <br>" + str(n) + '<br> <p style="font-size: 30px; margin-top: 5px; margin-right: 2px; margin-bottom: 0px; margin-left: 10px;">' + i + '</p>'
         else:
             n = '<div style=" float: left; margin-left: 10px; font-size: 52px; margin-top: 35px;">' + str(n) + '</div> <br> <p style="font-size: 30px; margin-top: 5px; margin-right: 2px; margin-bottom: 0px; margin-left: 10px;">' + i + '</p>' 
@@ -129,18 +140,6 @@ def abon():
         n = str(n)
         yield str(n)
     return Response(abon(), mimetype='text')
-
-@app.route('/reload')
-def reload():
-    def reloaded():
-        with open("reload.txt", "r+") as r:
-            print(r)
-            if r == "True":
-                with open("reload.txt",'w') as pv:
-                    pv.write("False")
-                    pv.close()
-                yield redirect("/", code=302)
-    return Response(reloaded())
 
 if __name__ == '__main__':
     #os.system("python scoreboardqt.py &")
