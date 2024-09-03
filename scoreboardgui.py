@@ -26,6 +26,7 @@ import json
 import urllib.request
 from os import remove
 from sys import argv
+import webbrowser
 
 #Win build only
 #os.chdir(sys._MEIPASS)
@@ -1091,20 +1092,44 @@ def OBS():
     ohbees = Toplevel(root)
     ohbees.resizable(False, False)
     ohbees.title("OBS Setup Info")
-    ohbees.geometry("300x312")
-    t1 = tk.Label(ohbees, text="""
-            Capture type: Browser
-            Width: 2000
-            Height: 150
-            Base (Canvas) Resolution: 1920x1080
-
+    ohbees.geometry("400x130")
+    t1 = tk.Label(ohbees, text="""Capture type: Browser
+    Width: 2000
+    Height: 150
+        Base (Canvas) Resolution: 1920x1080
 """)
 #    button = tk.Button(ohbees,
 #                                 text="Install OBS Element",
 #                                 command= lambda: installobsthing())
-#    t1.pack()
-#    button.pack()
-    
+    t1.pack()
+    #button.pack()
+
+def clrtime():
+    killt()
+    with open("timem.txt",'w') as rstimes:
+        rstimes.write("00")
+        rstimes.close()
+    with open("times.txt",'w') as rstimem:
+        rstimem.write("00")
+        rstimem.close()
+    killt()
+
+def clrscore():
+    cfscore.delete(0, tk.END)
+    cfscore.insert(0, "")
+    awayscore.delete(0, tk.END)
+    awayscore.insert(0, "")
+
+def clrteam():
+    cfsteam.delete(0, tk.END)
+    cfsteam.insert(0, "")
+    awayteam.delete(0, tk.END)
+    awayteam.insert(0, "")
+
+def clrall():
+    clrtime()
+    clrscore()
+    clrteam()
 
 def keys():
     showinfo("Hotkeys", """ 
@@ -1128,7 +1153,17 @@ def keys():
              """)
 
 def about():
-    showinfo("Window", "CFS Digital Scoreboard\nVersion: 3\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2024")
+    abt = Toplevel(root)
+    abt.resizable(False, False)
+    abt.title("About")
+    abt.geometry("400x200")
+    infotxt = tk.Label(abt, text="CFS Digital Scoreboard\nVersion: 3\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2024 \n\n")
+    button = tk.Button(abt,
+                                 text="Submit a bug",
+                                 command= lambda: webbrowser.open_new_tab("example.com"))
+    
+    infotxt.pack()
+    button.pack()
 
 def saveEmergency():
     with open("index.html",'w') as index:
@@ -1389,6 +1424,9 @@ keyboard.add_hotkey('Alt + 5', min2aw)
 keyboard.add_hotkey('Alt + 6', min3aw)
 keyboard.add_hotkey('Alt + n', tim)
 keyboard.add_hotkey('Alt + m', killt)
+keyboard.add_hotkey('Alt + 8', clrtime)
+keyboard.add_hotkey('Alt + 9', clrscore)
+keyboard.add_hotkey('Alt + 0', clrall)
 menubar = Menu(root)
 help_ = Menu(menubar, tearoff = 0)
 theme_ = Menu(menubar, tearoff = 0)
