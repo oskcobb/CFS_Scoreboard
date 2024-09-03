@@ -1160,7 +1160,7 @@ def about():
     infotxt = tk.Label(abt, text="CFS Digital Scoreboard\nVersion: 3\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2024 \n\n")
     button = tk.Button(abt,
                                  text="Submit a bug",
-                                 command= lambda: webbrowser.open_new_tab("example.com"))
+                                 command= lambda: webbrowser.open_new_tab("https://github.com/oskcobb/CFS_Scoreboard/issues/new"))
     
     infotxt.pack()
     button.pack()
