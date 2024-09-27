@@ -1,9 +1,10 @@
 #Written by Oskar L. Cobb, 2023
 #Inteneded only for use in Christian Fellowship School
-#version 2
+#version 3
 
 import tkinter as tk
 from tkinter import *
+from tkinter import filedialog
 from tkinter.ttk import *
 import os
 import math
@@ -11,7 +12,7 @@ from time import sleep
 import time
 import threading
 import keyboard
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showinfo, showerror, askquestion
 import random
 import time
 from datetime import datetime
@@ -20,7 +21,12 @@ from flask import Flask, Response, render_template, url_for
 from turbo_flask import Turbo
 import sys
 import os
-import scoreboardweb
+import requests
+import json
+import urllib.request
+from os import remove
+from sys import argv
+import webbrowser
 
 #Win build only
 #os.chdir(sys._MEIPASS)
@@ -28,9 +34,117 @@ import scoreboardweb
 global killtime
 killtime = 0
 root = tk.Tk()
+root.resizable(False, False)
 root.iconbitmap("cfs.ico")
 app = Flask(__name__)
 turbo = Turbo(app)
+
+default = """<!--Written by Oskar L. Cobb, 2023-->
+<!--Inteneded only for use in Christian Fellowship School-->
+
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=1720, initial-scale=1">
+    <title>CFS Scoreboard</title>
+    {{ turbo() }}
+    <style>
+    .scoreboard {
+        background: #ffffff;
+        float:left;
+        height: 100%;
+        width: 100%;
+    }
+    p.clear {
+        clear: left;
+    }
+    </style>
+    <link rel="icon" type="image/png" href="https://cfsknights.org/wp-content/uploads/2022/06/cfs-site-icon-150x150.png">
+ </head>
+ <body style="background-color: #00ff00;">
+    <div class="scoreboard">
+        <image style="float: left;"src="https://cfsknights.org/wp-content/uploads/2022/06/cfs-site-icon-150x150.png"/>
+        <!--<p style="display: inline-block; position: relative; top: -10%; left: 15%; font-size: 80px; ">CFS</p>-->
+        <div id="cfteam" style=" float: left; font-size: 42px; margin-left: 50px;"></div>
+        <!--<div id="cfsbon" style="float: left; margin-left: 80px; margin-top: 80px; font-size: 24px;"></div>-->
+        <div id="cfs_score" style=" float: left; border: 5px solid black; margin-left: 50px; font-size: 124px;"></div>
+        <div id="awayteam" style=" float: left; margin-left: 80px; font-size: 52px; margin-top: 35px;"></div>
+        <!--<div id="abon" style="float: left; margin-left: 80px; margin-top: 80px; font-size: 24px;"></div>-->
+        <div id="away_score" style=" float: left; border: 5px solid black; margin-left: 40px; font-size: 124px;"></div>
+        <div id="clock" style="float: right; font-size: 124px; text-align: right; vertical-align: 2px;></div>"></div>
+        <div id="quarter" style="float: right; font-size: 124px; vertical-align: 2px; margin-right: 70px;"></div>
+    </div>
+    <script>
+    var cfs_score = document.getElementById("cfs_score");
+    var clock = document.getElementById("clock");
+    var siteWidth = 1720;
+    var scale = screen.width /siteWidth;
+
+    document.querySelector('meta[name="viewport"]').setAttribute('content', 'width='+siteWidth+', initial-scale='+scale+'');
+    setInterval(() => {
+            fetch("{{ url_for('reloaded') }}")
+            .then(response => {
+                    response.text().then(t => {i = t})
+                    console.log(i)
+                    if (i === "True") {
+                        window.location.replace("{{ url_for('index') }}");
+                        console.log("yes")
+                    }else{
+                        console.log("no")
+                    }
+                });
+            }, 1000); 
+    setInterval(() => {
+        fetch("{{ url_for('cfs_score') }}")
+        .then(response => {
+                response.text().then(t => {cfs_score.innerHTML = t})
+            });
+        }, 1000);  
+    setInterval(() => {
+        fetch("{{ url_for('clock') }}")
+        .then(response => {
+                response.text().then(t => {clock.innerHTML = t})
+            });
+        }, 1000);  
+    setInterval(() => {
+        fetch("{{ url_for('cfteam') }}")
+        .then(response => {
+                response.text().then(t => {cfteam.innerHTML = t})
+            });
+        }, 1000);
+    setInterval(() => {
+        fetch("{{ url_for('away_score') }}")
+        .then(response => {
+                response.text().then(t => {away_score.innerHTML = t})
+            });
+        }, 1000);  
+    setInterval(() => {
+        fetch("{{ url_for('awayteam') }}")
+        .then(response => {
+                response.text().then(t => {awayteam.innerHTML = t})
+            });
+        }, 1000);
+    setInterval(() => {
+        fetch("{{ url_for('quarter') }}")
+        .then(response => {
+                response.text().then(t => {quarter.innerHTML = t})
+            });
+        }, 1000);
+    /*setInterval(() => {
+        fetch("{{ url_for('cfsbon') }}")
+        .then(response => {
+                response.text().then(t => {cfsbon.innerHTML = t})
+            });
+        }, 1000);
+    setInterval(() => {
+        fetch("{{ url_for('abon') }}")
+        .then(response => {
+                response.text().then(t => {abon.innerHTML = t})
+            });
+        }, 1000);*/
+    </script>
+ </body>
+
+"""
 
 def wait(x):
     while True:
@@ -61,7 +175,7 @@ def clock():
         x = ss.get()
         print(x)
         if str(x) == "start second" or str(x) == "":
-            i = "0"
+            x = "0"
         print(x)
         if int(x) <= 9:
             if int(str(i)[0]) != 0:
@@ -970,11 +1084,188 @@ def awayteamfunc(e):
             pv.write(i)
             pv.truncate()
 
+def installobsthing():
+    if sys.platform.startswith('win32') == False:
+        showerror("Error: this feature is only functional on windows currently.")
+
+def OBS():
+    ohbees = Toplevel(root)
+    ohbees.iconbitmap("cfs.ico")
+    ohbees.resizable(False, False)
+    ohbees.title("OBS Setup Info")
+    ohbees.geometry("300x75")
+    t1 = tk.Label(ohbees, text="""Capture type: Browser
+    Width: 2000
+    Height: 150
+        Base (Canvas) Resolution: 1920x1080
+""")
+#    button = tk.Button(ohbees,
+#                                 text="Install OBS Element",
+#                                 command= lambda: installobsthing())
+    t1.pack()
+    #button.pack()
+
+def clrtime():
+    killt()
+    with open("timem.txt",'w') as rstimes:
+        rstimes.write("00")
+        rstimes.close()
+    with open("times.txt",'w') as rstimem:
+        rstimem.write("00")
+        rstimem.close()
+    killt()
+
+def clrscore():
+    cfscore.delete(0, tk.END)
+    cfscore.insert(0, "")
+    awayscore.delete(0, tk.END)
+    awayscore.insert(0, "")
+
+def clrteam():
+    cfsteam.delete(0, tk.END)
+    cfsteam.insert(0, "")
+    awayteam.delete(0, tk.END)
+    awayteam.insert(0, "")
+
+def clrall():
+    clrtime()
+    clrscore()
+    clrteam()
+
 def keys():
-    showinfo("Window", " Alt + N -> Start clock \n Alt + M -> Pause clock \n ctrl + 1 -> Plus one to home score \n ctrl + 2 -> Plus two to home score \n ctrl + 3 -> Plus three to home score \n alt + 1 -> Minus one to home score \n alt + 2 -> Minus two to home score \n alt + 3 -> Minus three to home score \n ctrl + 4 -> Plus one to away score \n ctrl + 5 -> Plus two to away score \n ctrl + 6 -> Plus three to away score \n alt + 4 -> Minus one to away score \n alt + 5 -> Minus two to away score \n alt + 6 -> Minus three to away score")
+    showinfo("Hotkeys", """ 
+             Alt + N   ->  Start clock
+             Alt + M   ->  Pause clock
+             Ctrl + 1  ->  Plus one to home score
+             Ctrl + 2  ->  Plus two to home score
+             Ctrl + 3  ->  Plus three to home score
+             Alt + 1   ->  Minus one to home score
+             Alt + 2   ->  Minus two to home score 
+             Alt + 3   ->  Minus three to home score
+             Ctrl + 4  ->  Plus one to away score
+             Ctrl + 5  ->  Plus two to away score
+             Ctrl + 6  ->  Plus three to away score 
+             Alt + 4   ->  Minus one to away score
+             Alt + 5   ->  Minus two to away score
+             Alt + 6   ->  Minus three to away score
+             Alt + 8   ->  Clear time
+             Alt + 9   ->  Clear score
+             Alt + 0   ->  Clear all
+             """)
 
 def about():
-    showinfo("Window", "CFS Digital Scoreboard\nVersion: 2\ninteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2023")
+    abt = Toplevel(root)
+    abt.iconbitmap("cfs.ico")
+    abt.resizable(False, False)
+    abt.title("About")
+    abt.geometry("400x150")
+    infotxt = tk.Label(abt, text="CFS Digital Scoreboard\nVersion: 3\nInteneded only for use in Christian Fellowship School\n\n\nWritten by Oskar Cobb, 2022-2024 \n")
+    button = tk.Button(abt,
+                                 text="Submit a bug",
+                                 command= lambda: webbrowser.open_new_tab("https://github.com/oskcobb/CFS_Scoreboard/issues/new"))
+    
+    infotxt.pack()
+    button.pack()
+
+def saveEmergency():
+    with open("index.html",'w') as index:
+        index.write(str(code.get("1.0", tk.END)))
+        index.close()
+    with open("htmlfile.txt",'w') as pv:
+        pv.write("index.html")
+        pv.close()
+    with open("reload.txt",'w') as pv:
+        pv.write("True")
+        pv.close()
+    txtedit.destroy()
+
+def rst(code):
+    code.delete("1.0",END)
+    code.insert("1.0", default)
+    with open("reload.txt",'w') as pv:
+        pv.write("True")
+        pv.close()
+
+def textedit():
+    global code
+    global txtedit
+    txtedit = Toplevel(root)
+    txtedit.iconbitmap("cfs.ico")
+    txtedit.resizable(False, False)
+    txtedit.title("Emergency theme edit")
+    txtedit.geometry("600x425")
+    scrollbar = Scrollbar(txtedit) 
+    scrollbar.pack(side=RIGHT, 
+               fill=BOTH) 
+    code = Text(txtedit, 
+                 yscrollcommand=scrollbar.set) 
+    code.pack(fill=BOTH)
+    scrollbar.config(command=code.yview) 
+    cancelbtn = Button(txtedit, text="Cancel", command=txtedit.destroy)
+    savebtn = Button(txtedit, text="Save", command=saveEmergency)
+    rstbtn = Button(txtedit, text="Reset to default", command= lambda: rst(code))
+    cancelbtn.pack(side=RIGHT)
+    savebtn.pack(side=RIGHT)
+    rstbtn.pack(side=RIGHT)
+    code.insert("1.0", default)
+
+def dl_theme(name):
+    r = requests.get('https://raw.githubusercontent.com/oskcobb/CFS_Scoreboard-Themes/main/themes.json')
+    themes = json.loads(r.text)
+    for theme in themes["themes"]:
+        print(theme)
+        print(name)
+        print()
+        if theme["name"] == name:
+            temp = theme["name"]
+            url = theme["url"]
+            print(url)
+            try:
+                print(url)
+                dl = str(requests.get(url).text)
+            except:
+                showerror("Error", "URL Error")
+                pass
+            with open("index.html",'w') as index:
+                index.write(dl)
+                index.close()
+            with open("reload.txt",'w') as pv:
+                pv.write("True")
+                pv.close()
+
+def choosetheme():
+    chooseth = Toplevel(root)
+    chooseth.iconbitmap("cfs.ico")
+    chooseth.resizable(False, False)
+    chooseth.title("Choose Theme")
+    #chooseth.geometry("300x312")
+    r = requests.get('https://raw.githubusercontent.com/oskcobb/CFS_Scoreboard-Themes/main/themes.json')
+    themes = json.loads(r.text)
+    for theme in themes["themes"]:
+        name = theme["name"]
+        print(name)
+        button = tk.Button(chooseth,
+                                 text=name,
+                                 command= lambda j=name: dl_theme(j))
+        button.pack()
+
+def update_check():
+    latest_ver = requests.get("https://api.github.com/repos/oskcobb/CFS_Scoreboard/releases/latest").json()["tag_name"]
+    print(latest_ver)
+    if latest_ver != version_num:
+        update = askquestion("Update Available", "A new update is available: \n \nVersion " + str(latest_ver) + "\n \nWould you like to update now?")
+        if update == "yes":
+            showinfo("Directory","Please select a directory to download the new version.")
+            save = filedialog.askdirectory()
+            dl_url = requests.get("https://api.github.com/repos/oskcobb/CFS_Scoreboard/releases/latest").json()["assets"][0]['browser_download_url']
+            file_path = str(save) + f"/CFS_Scoreboard {latest_ver}.exe"
+            urllib.request.urlretrieve(dl_url, file_path)
+            delquestion = askquestion("Complete", "Done downloading.\n\nWould you like to remove the current version?")
+            if delquestion == "yes":
+                showinfo("Complete", "Please open the new file after this closes to finish install.")
+                remove(argv[0])
+                os.startfile(file_path)
+                exit()
 
 button1timetest = tk.Button(
     text="⏵",
@@ -1123,25 +1414,33 @@ p2 = tk.Radiobutton(root, text='2nd', variable=var3, value='2', command=psel)
 half = tk.Radiobutton(root, text='Half', variable=var3, value='half', command=psel)
 p3 = tk.Radiobutton(root, text='3rd', variable=var3, value='3', command=psel)
 p4 = tk.Radiobutton(root, text='4th', variable=var3, value='4', command=psel)
-keyboard.add_hotkey('ctrl + 1', plus1cfs)
-keyboard.add_hotkey('ctrl + 2', plus2cfs)
-keyboard.add_hotkey('ctrl + 3', plus3cfs)
-keyboard.add_hotkey('alt + 1', min1cfs)
-keyboard.add_hotkey('alt + 2', min2cfs)
-keyboard.add_hotkey('alt + 3', min3cfs)
-keyboard.add_hotkey('ctrl + 4', plus1aw)
-keyboard.add_hotkey('ctrl + 5', plus2aw)
-keyboard.add_hotkey('ctrl + 6', plus3aw)
-keyboard.add_hotkey('alt + 4', min1aw)
-keyboard.add_hotkey('alt + 5', min2aw)
-keyboard.add_hotkey('alt + 6', min3aw)
-keyboard.add_hotkey('alt + n', tim)
-keyboard.add_hotkey('alt + m', killt)
+keyboard.add_hotkey('Ctrl + 1', plus1cfs)
+keyboard.add_hotkey('Ctrl + 2', plus2cfs)
+keyboard.add_hotkey('Ctrl + 3', plus3cfs)
+keyboard.add_hotkey('Alt + 1', min1cfs)
+keyboard.add_hotkey('Alt + 2', min2cfs)
+keyboard.add_hotkey('Alt + 3', min3cfs)
+keyboard.add_hotkey('Ctrl + 4', plus1aw)
+keyboard.add_hotkey('Ctrl + 5', plus2aw)
+keyboard.add_hotkey('Ctrl + 6', plus3aw)
+keyboard.add_hotkey('Alt + 4', min1aw)
+keyboard.add_hotkey('Alt + 5', min2aw)
+keyboard.add_hotkey('Alt + 6', min3aw)
+keyboard.add_hotkey('Alt + n', tim)
+keyboard.add_hotkey('Alt + m', killt)
+keyboard.add_hotkey('Alt + 8', clrtime)
+keyboard.add_hotkey('Alt + 9', clrscore)
+keyboard.add_hotkey('Alt + 0', clrall)
 menubar = Menu(root)
 help_ = Menu(menubar, tearoff = 0)
+theme_ = Menu(menubar, tearoff = 0)
+menubar.add_cascade(label ='Themes', menu = theme_)
 menubar.add_cascade(label ='Help', menu = help_)
 help_.add_command(label ='Hotkeys', command = keys)
-help_.add_command(label ='about', command = about)
+help_.add_command(label ='OBS Setup', command = OBS)
+help_.add_command(label ='About', command = about)
+theme_.add_command(label ='Choose new theme', command = choosetheme)
+theme_.add_command(label ='Emergency theme editor', command = textedit)
 #button1timetest.config(image=play)
 #button1timetest.image = play
 rl1 = 8
@@ -1244,10 +1543,25 @@ with open("abon.txt",'w') as pv:
 with open("sel.txt",'w') as pv:
     pv.write("1st")
     pv.close()
+with open("reload.txt",'w') as pv:
+    pv.write("False")
+    pv.close()
+with open("index.html",'w') as pv:
+    try:
+        r = requests.get('https://raw.githubusercontent.com/oskcobb/CFS_Scoreboard-Themes/main/Basketball.html')
+        r = r.text
+        pv.write(r)
+        pv.close()
+    except:
+        print("Error getting theme from server. Using default theme.")
+        pv.write(default)
+        pv.close()
 global val
 val = 0
+version_num = "v3.0"
 os.startfile("scoreboardweb.py")
 root.geometry("451x350")
 root.title("CFS Scoreboard")
 root.config(menu = menubar)
+update_check()
 root.mainloop()
