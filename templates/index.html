@@ -1,4 +1,4 @@
-<!--Written by Oskar L. Cobb, 2022-->
+<!--Written by Oskar L. Cobb, 2024-->
 <!--Inteneded only for use in Christian Fellowship School-->
 
 <!DOCTYPE html>
@@ -22,14 +22,9 @@
  <body style="background-color: #00ff00;">
     <div class="scoreboard">
         <image style="float: left;"src="https://cfsknights.org/wp-content/uploads/2022/06/cfs-site-icon-150x150.png"/>
-        <!--<p style="display: inline-block; position: relative; top: -10%; left: 15%; font-size: 80px; ">CFS</p>-->
-        <div id="cfteam" style=" float: left; font-size: 42px; margin-left: 50px;"></div>
-        <!--<div id="cfsbon" style="float: left; margin-left: 80px; margin-top: 80px; font-size: 24px;"></div>-->
-        <div id="cfs_score" style=" float: left; border: 5px solid black; margin-left: 50px; font-size: 124px;"></div>
-        <div id="awayteam" style=" float: left; margin-left: 80px; font-size: 52px; margin-top: 35px;"></div>
-        <!--<div id="abon" style="float: left; margin-left: 80px; margin-top: 80px; font-size: 24px;"></div>-->
+        <!--
         <div id="away_score" style=" float: left; border: 5px solid black; margin-left: 40px; font-size: 124px;"></div>
-        <div id="clock" style="float: right; font-size: 124px; text-align: right; vertical-align: 2px;></div>
+        <div id="clock" style="float: right; font-size: 124px; text-align: right; vertical-align: 2px;></div>"></div>
         <div id="quarter" style="float: right; font-size: 124px; vertical-align: 2px; margin-right: 70px;"></div>
     </div>
     <script>
@@ -39,6 +34,19 @@
     var scale = screen.width /siteWidth;
 
     document.querySelector('meta[name="viewport"]').setAttribute('content', 'width='+siteWidth+', initial-scale='+scale+'');
+    setInterval(() => {
+            fetch("{{ url_for('reloaded') }}")
+            .then(response => {
+                    response.text().then(t => {i = t})
+                    console.log(i)
+                    if (i === "True") {
+                        window.location.replace("{{ url_for('index') }}");
+                        console.log("yes")
+                    }else{
+                        console.log("no")
+                    }
+                });
+            }, 1000); 
     setInterval(() => {
         fetch("{{ url_for('cfs_score') }}")
         .then(response => {
@@ -89,3 +97,5 @@
         }, 1000);*/
     </script>
  </body>
+
+
